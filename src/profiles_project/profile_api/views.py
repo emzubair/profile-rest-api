@@ -52,6 +52,9 @@ class HelloAPIView(APIView):
 
 class HelloViewSets(viewsets.ViewSet):
     """API viewset intro"""
+
+    serializer_class = serlizers.CustomSerializer
+
     def list(self,request):
         """return a Hello Message"""
         aViewSet = [
@@ -61,3 +64,33 @@ class HelloViewSets(viewsets.ViewSet):
         ]
 
         return Response({'message':'hello', 'viewSet':aViewSet})
+
+    def create(self,request):
+        """creates a hello message."""
+        serializer = serlizers.CustomSerializer(data=request.data)
+
+        if serializer.is_valid():
+            name = serializer.data.get('name')
+            message = 'Hello there {0}'.format(name)
+            return Response({'message': message})
+        else:
+            return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self,request,pk=None):
+        """Handles getting an object by ID."""
+        return Response({'http_method': 'GET'})
+
+    def update(self,request, pk=None):
+        """Updates an existing object."""
+        return Response({'http_method': 'PUT'})
+
+    def partial_update(self,request, pk=None):
+        """updates partially an existing object."""
+
+        return Response({'http_method': 'PATCH'})
+
+
+    def destroy(self, request, pk=None):
+        """Destroys an existing object."""
+
+        return Response({'http_method': 'DELETE'})
