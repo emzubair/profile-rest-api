@@ -1,11 +1,14 @@
+from rest_framework import status
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework.authentication import TokenAuthentication
+from rest_framework import filters
 
 from . import serlizers
-
+from . import models
+from . import permissions
 # Create your views here.
 
 class HelloAPIView(APIView):
@@ -94,3 +97,13 @@ class HelloViewSets(viewsets.ViewSet):
         """Destroys an existing object."""
 
         return Response({'http_method': 'DELETE'})
+
+class UserProfileViewSet(viewsets.ModelViewSet):
+    """Handles Creating, updating user profiles"""
+
+    serializer_class = serlizers.UserProfileSerializer
+    queryset = models.UserProfile.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permissions_classes = (permissions.UpdateOwnProfile,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name','email',)
